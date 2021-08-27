@@ -1,0 +1,34 @@
+---
+import * as fs from 'node:fs/promises'
+import { tokenize } from '@csstools/tokenizer/tokenizeSCSS'
+
+const process = (css, vars) => {
+	let defines = new Set
+	let cssText = ''
+	for (let token of tokenize(css)) {
+		switch (token.type) {
+			case 16:
+				if (token.data in vars) defines.add(`--${token.data}:${typeof vars[token.data] === 'bigint' ? `${vars[token.data]}px` : vars[token.data]}`)
+				cssText += `var(--${token.data})`
+				break
+			default:
+				cssText += token.lead + token.data + token.tail
+		}
+	}
+	if (defines.size) {
+		cssText = `:root{${[ ...defines ].join(';')}}\n${cssText}`
+	}
+	return cssText
+}
+
+let { from: fromCSS, with: withVars } = Astro.props
+
+fromCSS = await (
+	fromCSS instanceof URL
+		? String(await fs.readFile(fromCSS))
+	: fromCSS
+)
+
+let cssText = process(fromCSS, withVars)
+---
+{`<style>${cssText}</style>`}

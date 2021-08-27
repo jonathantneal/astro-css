@@ -1,0 +1,59 @@
+---
+import CSS from '../components/CSS.astro'
+import * as radix from '../assets/radix-colors.js'
+import * as fs from 'node:fs/promises'
+
+let cssURL = new URL('../assets/global.css', import.meta.url)
+---
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+	<CSS
+		from={`
+			body {
+				background: $mauve1;
+				color: $slate12;
+				font: 100%/1.5 sans-serif;
+			}
+
+			header {
+				margin-inline: auto;
+				max-width: 1145px;
+				padding-inline: $space5;
+				text-align: center;
+			}
+
+			header h1 {
+				font-size: $fontSize9;
+				line-height: $lineSize9;
+				margin-block: $lineSize9 0;
+			}
+
+			header p {
+				color: $sage11;
+				font-size: $fontSize6;
+				line-height: $lineSize6;
+				margin-block: $lineSize6 0;
+			}
+		`}
+		with={{
+			...radix.colors,
+			fontSize6: 21n,
+			fontSize9: 60n,
+			lineSize6: 30n,
+			lineSize9: 60n,
+			space5: 25n,
+		}}
+	/>
+	<title>Astro</title>
+</head>
+
+<body>
+	<h1>
+		Astro
+	</h1>
+</body>
+
+</html>
